@@ -1,0 +1,6 @@
+setup.py
+bitmex_market_maker.egg-info/PKG-INFO
+bitmex_market_maker.egg-info/SOURCES.txt
+bitmex_market_maker.egg-info/dependency_links.txt
+bitmex_market_maker.egg-info/requires.txt
+bitmex_market_maker.egg-info/top_level.txt
