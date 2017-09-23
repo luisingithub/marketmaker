@@ -49,3 +49,5 @@ Temporary Items
 .apdisk
 *.pyc
 grafic.txt
+market_maker/__pycache__/getTradeHis.cpython-36.pyc
+market_maker/__pycache__/market_maker.cpython-36.pyc
