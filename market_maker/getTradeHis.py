@@ -19,9 +19,9 @@ class GetHisTradeDatas:
             self.symbol = sys.argv[1]
         else:
             self.symbol = settings.SYMBOL
-        self.bitmex = bitmex.BitMEX(base_url=settings.BASE_URL, symbol=self.symbol, login=settings.LOGIN,
-                                    password=settings.PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.API_KEY,
-                                    apiSecret=settings.API_SECRET, orderIDPrefix=settings.ORDERID_PREFIX)
+        self.bitmex = bitmex.BitMEX(base_url=settings.BASE_URL, symbol=self.symbol, login=settings.REAL_LOGIN,
+                                    password=settings.REAL_PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.API_KEY,
+                                    apiSecret=settings.API_SECRET, orderIDPrefix=settings.REAL_ORDERID_PREFIX)
         self.period = settings.BACKTEST_PERIOD
         self.number_per_day = 1440 // self.period
         
@@ -55,7 +55,8 @@ class GetHisTradeDatas:
             self.tradeBucket = self.bitmex.tradeBucketed(self.symbol, 1440, dateindex)
             dateindex = getNextDay(dateindex)
             for i in range(0,self.number_per_day):
-                self.writeLineintoFile(i)               
+                self.writeLineintoFile(i) 
+            print(dateindex)              
             if is_datefinished(dateindex,settings.END_DATE):
                 print("data recording finish!")
                 break   
@@ -77,9 +78,9 @@ class GetHisTradeDatas:
         
 def run():
     DR = GetHisTradeDatas()
-    DR.createFile("backtestingdataback.csv")
-    #DR.run_loop()
-    DR.run_loop_back()
+    DR.createFile("backtestingdata2016.csv")
+    DR.run_loop()
+    #DR.run_loop_back()
     DR.closeFile()
     
 def is_datefinished(currentdate = "2017-01-01", enddate = "2017-08-31"):

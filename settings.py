@@ -7,11 +7,16 @@ import logging
 
 # API URL.
 BASE_URL = "https://testnet.bitmex.com/api/v1/"
-# BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment this.
+#BASE_URL = "https://www.bitmex.com/api/v1/"
+#REAL_BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment this.
 
 # The BitMEX API requires permanent API keys. Go to https://testnet.bitmex.com/api/apiKeys to fill these out.
 API_KEY = "zHgnTX-8mdBba8pEbKLQY7qj"
 API_SECRET = "6knPb6z1eOL-eFlo_SInS2zCwDWd-5R11p1adnTT_CJdtPHs"
+
+REAL_API_KEY = "21VhQOwzP3xYhgNHtaHFfNIW"
+REAL_API_SECRET = "6KNDJNBlUVfiEt-d1RskI6NMVq-Lw21H2aODL7Es-0hxfSGY"
+
 
 
 ########################################################################################################################
@@ -100,6 +105,7 @@ LOG_LEVEL = logging.INFO
 # cancel each others' orders.
 # Max length is 13 characters.
 ORDERID_PREFIX = "mm_bitmex_"
+REAL_ORDERID_PREFIX = "real_bitmex_"
 
 # If any of these files (and this file) changes, reload the bot.
 WATCHED_FILES = [join("market_maker", f) for f in ["market_maker.py", "bitmex.py", __file__]]
@@ -121,28 +127,28 @@ PRE_HIGH_PRICE = 4642.0
 PRE_LOW_PRICE = 4500.2
 POSITION_SIZE = 5
 
-#Strategy name
-STRATEGY = "Turtle"
+#Strategy name #Turtle, #R_Breaker, #MovingAverage
+STRATEGY = "MovingAverage"
 
 #backtesting 
 #period unit is "min": 1/5/60/1440
 IS_BACKTESTING = True
 BACKTEST_PERIOD = 5
 START_BTCOIN = 0.5
-BACKTESTFILE = "backtestingdataback.csv"
+BACKTESTFILE = "backtestingdata.csv"
 R_BREAKER_F1 = 0.35
 R_BREAKER_F2 = 0.07
 R_BREAKER_F3 = 0.25
 
 #data record and backtest
-START_DATE = "2017-01-01"
-END_DATE = "2017-09-20"
+START_DATE = "2016-01-01"
+END_DATE = "2016-08-30"
 
 # Turle 
 DonchianN = 5 #number of backtime
 ATRN = 5
 ADDTIME = 5
-ZHIYINGUSD = 100.0
+ZHIYINGUSD = 500.0
 
 #MovingAverage
-AVERGAGEDAY = 10
+AVERGAGEDAY = 20

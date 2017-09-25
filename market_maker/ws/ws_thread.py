@@ -12,6 +12,7 @@ from market_maker.auth.APIKeyAuth import generate_nonce, generate_signature
 from market_maker.utils.log import setup_custom_logger
 from future.utils import iteritems
 from future.standard_library import hooks
+from market_maker.settings import settings
 with hooks():  # Python 2/3 compat
     from urllib.parse import urlparse, urlunparse
 
@@ -327,7 +328,7 @@ if __name__ == "__main__":
     logger.addHandler(ch)
     ws = BitMEXWebsocket()
     ws.logger = logger
-    ws.connect("https://testnet.bitmex.com/api/v1")
+    ws.connect(settings.BASE_URL)
     while(ws.ws.sock.connected):
         sleep(1)
 

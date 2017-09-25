@@ -236,6 +236,8 @@ class OrderManager:
             self.init_R_Break()  
         elif settings.STRATEGY ==  "Turtle":
             self.init_Turtle()
+        elif settings.STRATEGY == "MovingAverage":
+            self.init_MovingAverage()
         else:  
             self.handle_trade = self.place_orders
             
@@ -248,12 +250,14 @@ class OrderManager:
         self.finalUSDBenifit = 0.0
         self.baseBenifit = 0.0
         self.bankrupt = False
-        
-        # normal variables
-        self.currentPrice = 0.0
-        self.preCurrentPrice = 0.0
+        self.unrealisedBitcoinBenifit = 0.0
         self.unrealisedbenifit = 0.0
         self.totalUSDbenifit = 0.0
+        
+        # prices variables
+        self.prevClosePrice = 0.0
+        self.currentPrice = 0.0
+        self.preCurrentPrice = 0.0
         self.lastAskPrice = 0.0
         self.lastBidPrice = 0.0
         self.lastAskSize = 0.0
@@ -272,6 +276,37 @@ class OrderManager:
         
         if not settings.IS_BACKTESTING:   
             self.reset()
+
+    def init_R_Break(self):
+        logger.info("using strategy: R_Breaker")
+        self.f1 = settings.R_BREAKER_F1
+        self.f2 = settings.R_BREAKER_F2
+        self.f3 = settings.R_BREAKER_F3
+        
+    def init_Turtle(self):
+        self.maxPreNhighPrice = 0.0
+        self.minPreNlowPrice = 10000
+        self.highPriceQueue = collections.deque(settings.DonchianN * [0], settings.DonchianN)
+        self.lowPriceQueue = collections.deque(settings.DonchianN * [0], settings.DonchianN)
+        self.ATR = 0
+        self.UnitPosition = 0
+        self.TurtlePos = 0 #could be -5 ~ +5
+        self.StopPrice = []
+        self.AddPrice = [0] * settings.ADDTIME
+        self.unitPositions = []
+        
+    def init_MovingAverage(self):
+        self.maxPreNhighPrice = 0.0
+        self.minPreNlowPrice = 10000
+        
+        self.highPriceQueue = collections.deque(settings.DonchianN * [0], settings.DonchianN)
+        self.lowPriceQueue = collections.deque(settings.DonchianN * [0], settings.DonchianN)
+        self.ATR = 0
+        self.UnitPosition = 0
+        self.TurtlePos = 0 #could be -5 ~ +5
+        self.AddPrice = [0] * settings.ADDTIME
+        self.movingAvergePrices = collections.deque(settings.AVERGAGEDAY * [0], settings.AVERGAGEDAY)
+        self.movingAveragePrice = 0.0
     
     def benifitCaculate(self):
         pricealpha = (self.endPrice_profit - self.startPrice_profit) / self.startPrice_profit
@@ -324,8 +359,10 @@ class OrderManager:
     def unrealisedBenifit(self):
         if abs(self.dynamic_position) > 0: 
             pricealpha = (self.currentPrice - self.startPrice_profit) / self.startPrice_profit
-            self.unrealisedbenifit = (pricealpha / (1+pricealpha) * self.dynamic_position / self.startPrice_profit) * self.currentPrice / (self.initBitcoinPrice * settings.START_BTCOIN) * 100
-            self.totalUSDbenifit = self.finalUSDBenifit + self.unrealisedbenifit
+            self.unrealisedBitcoinBenifit = pricealpha / (1+pricealpha) * self.dynamic_position / self.startPrice_profit
+            nowBitcoin = self.unrealisedBitcoinBenifit + settings.START_BTCOIN + self.totalprofit
+            self.totalUSDbenifit = (nowBitcoin * self.currentPrice) / (settings.START_BTCOIN * self.initBitcoinPrice) * 100 - 100.0
+            self.unrealisedbenifit = self.totalUSDbenifit - self.finalUSDBenifit
             #print("unrealisedbenifit = %.2f, finalUSDBenifit = %.2f" %(self.unrealisedbenifit,self.finalUSDBenifit))
         
     def lastDaysettlement(self, tradeline = " "): # on last day of backtest to make position to 0
@@ -338,23 +375,6 @@ class OrderManager:
             self.benifitCaculatePos(self.dynamic_position,self.endPrice_profit)
             self.dynamic_position = 0
             
-    def init_R_Break(self):
-        logger.info("using strategy: R_Breaker")
-        self.f1 = settings.R_BREAKER_F1
-        self.f2 = settings.R_BREAKER_F2
-        self.f3 = settings.R_BREAKER_F3
-        
-    def init_Turtle(self):
-        self.maxPreNhighPrice = 0.0
-        self.minPreNlowPrice = 10000
-        self.highPriceQueue = collections.deque(settings.DonchianN * [0], settings.DonchianN)
-        self.lowPriceQueue = collections.deque(settings.DonchianN * [0], settings.DonchianN)
-        self.ATR = 0
-        self.UnitPosition = 0
-        self.TurtlePos = 0 #could be -5 ~ +5
-        self.StopPrice = []
-        self.AddPrice = [0] * settings.ADDTIME
-        self.unitPositions = []
     
     def getPreNMaxMinPrice(self):
         N = settings.DonchianN
@@ -659,6 +679,81 @@ class OrderManager:
                         self.TurtlePos -= 1   
                         self.updateStartPriceProfit(self.lastBidPrice, (self.UnitPosition * (-1)))   
                         print(self.prevDayBacktest + (" 价格向下突破%.2f, 卖出加仓 -%d, 现仓位为%.d, 仓位均价%.2f" %(self.AddPrice[abs(self.TurtlePos) - 2],self.UnitPosition,self.dynamic_position, self.startPrice_profit)))
+   
+    def tradeMovingAverage(self):
+        sell_break = 0.0
+        buy_break = 0.0
+        if self.TurtlePos == 0:
+            if self.currentPrice > self.movingAveragePrice:
+                traderesult = self.backtest_trade(self.UnitPosition, "buy")
+                if traderesult:
+                    self.AddPrice[0] = self.lastAskPrice + 0.5 * self.ATR                
+                    self.TurtlePos += 1
+                    self.startPrice_profit = self.lastAskPrice
+                    print(self.prevDayBacktest + (" 价格向上突破均线%.2f,建仓:%d, 建仓价为%.2f" %(self.movingAveragePrice, self.UnitPosition,self.startPrice_profit)))
+            elif self.currentPrice < self.movingAveragePrice:
+                traderesult = self.backtest_trade(self.UnitPosition * 10, "sell")
+                if traderesult:
+                    self.AddPrice[0] = self.lastBidPrice - 0.5 * self.ATR
+                    sellbreak = self.lastBidPrice - 0.5 * self.ATR
+                    self.TurtlePos -= 1
+                    self.startPrice_profit = self.lastAskPrice
+                    print(self.prevDayBacktest + (" 价格向下跌破均线%.2f,建仓:-%d, 建仓价为%.2f" %(self.movingAveragePrice, self.UnitPosition, self.startPrice_profit)))
+        elif abs(self.TurtlePos) > 0:
+            sell_break = self.AddPrice[abs(self.TurtlePos) - 1] - 2 * self.ATR
+            buy_break = self.AddPrice[abs(self.TurtlePos) - 1] + 2 * self.ATR
+            if self.TurtlePos > 0:
+                if self.currentPrice < self.movingAveragePrice or self.unrealisedbenifit > settings.ZHIYINGUSD:
+                    pos = self.dynamic_position
+                    traderesult = self.backtest_trade(abs(self.dynamic_position), "sell")
+                    if traderesult:
+                        self.TurtlePos = 0
+                        print(self.prevDayBacktest + (" 价格向下跌破均线触发止盈, 平仓价为%.2f" %(self.lastBidPrice)))
+                        self.benifitCaculatePos(pos, self.lastBidPrice)
+                        return 0
+                if self.currentPrice < sell_break:
+                    pos = self.dynamic_position
+                    traderesult = self.backtest_trade(abs(self.dynamic_position), "sell")
+                    if traderesult:
+                        self.TurtlePos = 0
+                        print(self.prevDayBacktest + (" 价格向下跌破2ATR触发平仓, 平仓价为%.2f" %(self.lastBidPrice)))
+                        self.benifitCaculatePos(pos, self.lastBidPrice)
+                        return 0
+                elif abs(self.TurtlePos) >= settings.ADDTIME:
+                    return 0
+                elif self.currentPrice > self.AddPrice[abs(self.TurtlePos) - 1]:
+                    traderesult = self.backtest_trade(self.UnitPosition, "buy")
+                    if traderesult:
+                        self.AddPrice[abs(self.TurtlePos)] = self.AddPrice[abs(self.TurtlePos) - 1] + 0.5 * self.ATR
+                        self.TurtlePos += 1
+                        self.updateStartPriceProfit(self.lastAskPrice, self.UnitPosition)
+                        print(self.prevDayBacktest + (" 价格向上突破%.2f, 加仓 %d, 现仓位为%.d, 仓位均价%.2f" %(self.AddPrice[abs(self.TurtlePos) - 2],self.UnitPosition, self.dynamic_position, self.startPrice_profit)))
+            elif self.TurtlePos < 0:
+                if self.currentPrice > self.movingAveragePrice  or self.unrealisedbenifit > settings.ZHIYINGUSD:
+                    pos = self.dynamic_position
+                    traderesult = self.backtest_trade(abs(self.dynamic_position), "buy")
+                    if traderesult:
+                        self.TurtlePos = 0
+                        print(self.prevDayBacktest + (" 价格向上涨破均价触发平仓, 平仓价为%.2f" %(self.lastAskPrice)))
+                        self.benifitCaculatePos(pos, self.lastAskPrice)
+                        return 0
+                if self.currentPrice > buy_break:
+                    pos = self.dynamic_position
+                    traderesult = self.backtest_trade(abs(self.dynamic_position), "buy")
+                    if traderesult:
+                        self.TurtlePos = 0
+                        print(self.prevDayBacktest + (" 价格向上涨破均价触发平仓, 平仓价为%.2f" %(self.lastAskPrice)))
+                        self.benifitCaculatePos(pos, self.lastAskPrice)
+                        return 0
+                if abs(self.TurtlePos) >= settings.ADDTIME:
+                    return 0
+                if self.currentPrice < self.AddPrice[abs(self.TurtlePos) - 1]:
+                    traderesult = self.backtest_trade(self.UnitPosition * 10, "sell")
+                    if traderesult:
+                        self.AddPrice[abs(self.TurtlePos)] = self.AddPrice[abs(self.TurtlePos) - 1] - 0.5 * self.ATR   
+                        self.TurtlePos -= 1   
+                        self.updateStartPriceProfit(self.lastBidPrice, (self.UnitPosition * (-1)))   
+                        print(self.prevDayBacktest + (" 价格向下突破%.2f, 卖出加仓 -%d, 现仓位为%.d, 仓位均价%.2f" %(self.AddPrice[abs(self.TurtlePos) - 2],self.UnitPosition,self.dynamic_position, self.startPrice_profit)))   
                 
     def backtest_trade(self, pos, dir = "buy"):   #trade in market price
         if dir == "buy":
@@ -739,6 +834,75 @@ class OrderManager:
             #self.Zhishun(lastPrice, lastBidSize, lastBidPrice, lastAskPrice, lastAskSize)
             self.tradeTultle()
 
+    def handle_movingaverage_backtest(self, tradeline = " "):
+        #logger.info('Debug by Lu: handle_trade_Turtle_backtest is called')   
+        if self.firstTime:
+            self.todayHighPrice = 0
+            self.todayLowPrice = 10000
+            self.initBitcoinPrice = getTradeHis.getPrevClosePriceFromLine(tradeline)
+            self.prevClosePrice = self.initBitcoinPrice
+            for i in range(0,settings.AVERGAGEDAY):
+                self.movingAvergePrices.append(self.initBitcoinPrice)
+            
+            #self.firstTime = False
+        Is_newDay = self.is_newDay(tradeline)
+        if Is_newDay:
+            self.highPriceQueue.append(self.todayHighPrice)
+            self.lowPriceQueue.append(self.todayLowPrice)
+            self.prevClosePrice = getTradeHis.getPrevClosePriceFromLine(tradeline)
+            self.movingAvergePrices.append(self.prevClosePrice)
+            self.movingAveragePrice = np.mean(self.movingAvergePrices)
+            self.prevHighPrice = self.todayHighPrice
+            self.prevLowPrice = self.todayLowPrice
+            self.todayHighPrice = self.prevClosePrice
+            self.todayLowPrice = self.prevClosePrice
+            self.getPreNMaxMinPrice()
+            self.simulateDayNumbers += 1
+            self.calcATR()
+            self.CalcUnit(self.prevClosePrice)
+            
+     
+        lastAskPrice = getTradeHis.getbidPriceFromLine(tradeline)
+        lastBidPrice = getTradeHis.getaskPriceFromLine(tradeline)
+        lastAskSize = getTradeHis.getaskSizeFromLine(tradeline)
+        lastBidSize = getTradeHis.getbidSizeFromLine(tradeline)
+        
+        if abs(lastAskPrice - lastBidPrice) > settings.RESONABLE_PRICE_GAP:
+            #数据无效,买价与卖价差别太大
+            return 0
+        
+        self.lastAskPrice = lastAskPrice
+        self.lastBidPrice = lastBidPrice
+        self.lastAskSize = lastAskSize
+        self.lastBidSize = lastBidSize
+        
+        lastPrice = (lastAskPrice + lastBidPrice) / 2
+        
+        if self.firstTime:
+            self.preCurrentPrice = lastPrice
+            self.currentPrice = lastPrice
+            self.firstTime = False
+            
+        #print("lastPrice = %.2f, preCurrentPrice = %.2f" %(lastPrice, self.preCurrentPrice))
+        if abs(lastPrice - self.preCurrentPrice) > settings.RESONABLE_PRICE_STEP:
+            #数据无效,filter the unresonable pricegap
+            print(self.prevDayBacktest + "价格异常变动，跳过此次交易，请查看！！！！！！！！！")
+            return 0
+        
+        self.preCurrentPrice = self.currentPrice
+        self.currentPrice = lastPrice
+        
+        if lastPrice > self.todayHighPrice:
+            self.todayHighPrice = lastPrice
+        if lastPrice < self.todayLowPrice:
+            self.todayLowPrice = lastPrice
+        self.baseBenifit = (lastPrice - self.initBitcoinPrice) / self.initBitcoinPrice * 100
+        self.unrealisedBenifit()
+        
+        if self.simulateDayNumbers > settings.DonchianN and Is_newDay:
+            #self.Zhishun(lastPrice, lastBidSize, lastBidPrice, lastAskPrice, lastAskSize)
+            #self.UnitPosition = 800
+            self.tradeMovingAverage()
     
     def handle_trade_R_Breaker_backtest(self, tradeline = " "):
         #logger.info('Debug by Lu: handle_trade_R_Breaker is called')   
@@ -1078,6 +1242,19 @@ class OrderManager:
             self.handle_trade()  # this function will replace the place_orders()
             #self.place_orders()  # Creates desired orders and converges to existing orders
     
+    def recordbenifit(self, file):
+            #file.write(str("%.2f" % self.baseBenifit))
+            file.write(str("%.2f" % self.prevClosePrice))
+            file.write(" ")
+            file.write(str("%.2f" % self.totalUSDbenifit))
+            file.write(" ")
+            file.write(str("%d" % self.dynamic_position))
+            file.write(" ")
+            file.write(str("%.2f" % self.movingAveragePrice))
+            file.write(" ")
+            file.write(str("%.2f" % self.baseBenifit))
+            file.write("\n")
+    
     def run_backtesting(self):
         logger.info("Start backtesting from date: " + settings.START_DATE + " to date: " + settings.END_DATE)
         recorddata = open(settings.BACKTESTFILE,"r")
@@ -1094,32 +1271,21 @@ class OrderManager:
                     self.handle_trade_R_Breaker_backtest(line)
                 if settings.STRATEGY == "Turtle":
                     self.handle_trade_Turtle_backtest(line)
+                if settings.STRATEGY == "MovingAverage":
+                    self.handle_movingaverage_backtest(line)
                     
             dateindex = getTradeHis.getNextDay(dateindex)
             # write the benifit comparision
-            graficdata.write(str("%.2f" % self.baseBenifit))
-            graficdata.write(" ")
-            #graficdata.write(str("%.2f" % self.finalUSDBenifit)) 
-            #graficdata.write(" ")
-            graficdata.write(str("%.2f" % self.totalUSDbenifit))
-            graficdata.write(" ")
-            graficdata.write(str("%d" % self.dynamic_position))
-            graficdata.write("\n")
-        
+            
+            self.recordbenifit(graficdata)
+    
             if self.bankrupt:
                 print("you are bankrupt now!!!!!!")
                 break
 
             if getTradeHis.is_datefinished(dateindex,settings.END_DATE):
                 self.lastDaysettlement(line)
-                graficdata.write(str("%.2f" % self.baseBenifit))
-                graficdata.write(" ")
-                #graficdata.write(str("%.2f" % self.finalUSDBenifit))
-                #graficdata.write(" ")
-                graficdata.write(str("%.2f" % self.totalUSDbenifit))
-                graficdata.write(" ")
-                graficdata.write(str("%d" % self.dynamic_position))
-                graficdata.write("\n")
+                self.recordbenifit(graficdata)
                 print("back testing is finished!")
                 print("盈利交易次数为:%d, 亏损交易次数为%d" %(self.numberPostiveTrade,self.numberNegativTrade))
                 break 
