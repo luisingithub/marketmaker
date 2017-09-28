@@ -20,8 +20,8 @@ class GetHisTradeDatas:
         else:
             self.symbol = settings.SYMBOL
         self.bitmex = bitmex.BitMEX(base_url=settings.BASE_URL, symbol=self.symbol, login=settings.REAL_LOGIN,
-                                    password=settings.REAL_PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.API_KEY,
-                                    apiSecret=settings.API_SECRET, orderIDPrefix=settings.REAL_ORDERID_PREFIX)
+                                    password=settings.REAL_PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.REAL_API_KEY,
+                                    apiSecret=settings.REAL_API_SECRET, orderIDPrefix=settings.REAL_ORDERID_PREFIX, shouldWSAuth=False)
         self.period = settings.BACKTEST_PERIOD
         self.number_per_day = 1440 // self.period
         
@@ -45,8 +45,6 @@ class GetHisTradeDatas:
     def closeFile(self):
         self.recordFile.close()   
         
-
-          
     def run_loop(self):
         dateindex = settings.START_DATE
         while True:
@@ -78,7 +76,7 @@ class GetHisTradeDatas:
         
 def run():
     DR = GetHisTradeDatas()
-    DR.createFile("backtestingdata2016.csv")
+    DR.createFile("backtestingdata2017.csv")
     DR.run_loop()
     #DR.run_loop_back()
     DR.closeFile()
@@ -133,6 +131,8 @@ def getbidPriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28
     bidPriceStr = linestr.split()[2]
     if bidPriceStr == "None":
        bidPriceStr = linestr.split()[3] 
+    if bidPriceStr == "None":
+        return -1
     bidPrice = float(bidPriceStr)
     return bidPrice
 
@@ -140,6 +140,8 @@ def getaskPriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28
     askPriceStr = linestr.split()[3]
     if askPriceStr == "None":
        askPriceStr = linestr.split()[2] 
+    if askPriceStr == "None":
+        return -1
     askPrice = float(askPriceStr)
     return askPrice
 
@@ -154,3 +156,11 @@ def getPrevClosePriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2
     preClosePriceStr = linestr.split()[5]
     preClosePrice = float(preClosePriceStr)
     return preClosePrice
+
+def IsThereANone(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
+    for i in range(1, 5, 1):
+        text = linestr.split()[i]
+        if text == "None":
+            return True
+    return False
+    

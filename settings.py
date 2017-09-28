@@ -6,16 +6,16 @@ import logging
 ########################################################################################################################
 
 # API URL.
-BASE_URL = "https://testnet.bitmex.com/api/v1/"
-#BASE_URL = "https://www.bitmex.com/api/v1/"
+#BASE_URL = "https://testnet.bitmex.com/api/v1/"
+BASE_URL = "https://www.bitmex.com/api/v1/"
 #REAL_BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment this.
 
 # The BitMEX API requires permanent API keys. Go to https://testnet.bitmex.com/api/apiKeys to fill these out.
 API_KEY = "zHgnTX-8mdBba8pEbKLQY7qj"
 API_SECRET = "6knPb6z1eOL-eFlo_SInS2zCwDWd-5R11p1adnTT_CJdtPHs"
 
-REAL_API_KEY = "21VhQOwzP3xYhgNHtaHFfNIW"
-REAL_API_SECRET = "6KNDJNBlUVfiEt-d1RskI6NMVq-Lw21H2aODL7Es-0hxfSGY"
+REAL_API_KEY = "bTS72bah7Ij7H96m_O72wjGG"
+REAL_API_SECRET = "D6GOFHmG0xR-y8x0ARNig4y3U1kJEWve-ovAirdgU45-O2Lc"
 
 
 
@@ -134,21 +134,23 @@ STRATEGY = "MovingAverage"
 #period unit is "min": 1/5/60/1440
 IS_BACKTESTING = True
 BACKTEST_PERIOD = 5
-START_BTCOIN = 0.5
-BACKTESTFILE = "backtestingdata.csv"
+START_BTCOIN = 2
+BACKTESTFILE = "backtestingdataback.csv"
 R_BREAKER_F1 = 0.35
 R_BREAKER_F2 = 0.07
 R_BREAKER_F3 = 0.25
 
 #data record and backtest
-START_DATE = "2016-01-01"
-END_DATE = "2016-08-30"
+START_DATE = "2017-01-01"
+END_DATE = "2017-09-20"
 
 # Turle 
 DonchianN = 5 #number of backtime
 ATRN = 5
-ADDTIME = 5
-ZHIYINGUSD = 500.0
+ADDTIME = 20
+ZHIYINGUSD = 100.0
 
 #MovingAverage
 AVERGAGEDAY = 20
+UPPERLIMIT = 2400
+UNTERLIMIT = -8000

@@ -16,6 +16,7 @@ def run():
     movingaverage = []
     everydayprofit = []
     graficdatafile = open("grafic.txt","r")
+    maxloss = 100.0
     while True:
         line = graficdatafile.readline()
         if not line:
@@ -23,7 +24,7 @@ def run():
         x1.append(index)
         dailyPrice_y1.append(float(line.split()[0]))
         y2.append(float(line.split()[1]))
-        y3.append(float(line.split()[2])/10)
+        y3.append(float(line.split()[2])/100)
         movingaverage.append(float(line.split()[3]))
         basebenifit_y4.append(float(line.split()[4]))
         #unrealisedbenifit_y5.append(float(line.split()[5]))
@@ -41,13 +42,16 @@ def run():
     # caculate the max drawbackprocent
     max = 0
     for i in range(0,index-2,1):
+        if y2[i] < maxloss:
+            maxloss = y2[i]
         for j in range(i+1,index-1,1):
-            if y2[i] > y2[j] and y2[i] > 0.0:
+            if y2[i] > y2[j] and y2[i] > 0:
                 drawback = (y2[i] - y2[j]) / (y2[i]+100.0) * 100
                 if drawback > max:
                     max = drawback
     print("最大回撤为-%.2f%%!" % max)
     print("夏普率为%.2f" % sharpratio)
+    print("最高亏损为%.2f%%!" % maxloss)
     #print("收益日平均为%.2f" % profitmean)
     
     pricedaily = Scatter(x=x1,y=dailyPrice_y1, name = "Daily Close Price(USD)")
