@@ -19,9 +19,9 @@ class GetHisTradeDatas:
             self.symbol = sys.argv[1]
         else:
             self.symbol = settings.SYMBOL
-        self.bitmex = bitmex.BitMEX(base_url=settings.BASE_URL, symbol=self.symbol, login=settings.LOGIN,
-                                    password=settings.PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.API_KEY,
-                                    apiSecret=settings.API_SECRET, orderIDPrefix=settings.ORDERID_PREFIX)
+        self.bitmex = bitmex.BitMEX(base_url=settings.BASE_URL, symbol=self.symbol, login=settings.REAL_LOGIN,
+                                    password=settings.REAL_PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.REAL_API_KEY,
+                                    apiSecret=settings.REAL_API_SECRET, orderIDPrefix=settings.REAL_ORDERID_PREFIX, shouldWSAuth=False)
         self.period = settings.BACKTEST_PERIOD
         self.number_per_day = 1440 // self.period
         
@@ -45,8 +45,6 @@ class GetHisTradeDatas:
     def closeFile(self):
         self.recordFile.close()   
         
-
-          
     def run_loop(self):
         dateindex = settings.START_DATE
         while True:
@@ -55,7 +53,8 @@ class GetHisTradeDatas:
             self.tradeBucket = self.bitmex.tradeBucketed(self.symbol, 1440, dateindex)
             dateindex = getNextDay(dateindex)
             for i in range(0,self.number_per_day):
-                self.writeLineintoFile(i)               
+                self.writeLineintoFile(i) 
+            print(dateindex)              
             if is_datefinished(dateindex,settings.END_DATE):
                 print("data recording finish!")
                 break   
@@ -77,9 +76,9 @@ class GetHisTradeDatas:
         
 def run():
     DR = GetHisTradeDatas()
-    DR.createFile("backtestingdataback.csv")
-    #DR.run_loop()
-    DR.run_loop_back()
+    DR.createFile("backtestingdata2017.csv")
+    DR.run_loop()
+    #DR.run_loop_back()
     DR.closeFile()
     
 def is_datefinished(currentdate = "2017-01-01", enddate = "2017-08-31"):
@@ -132,6 +131,8 @@ def getbidPriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28
     bidPriceStr = linestr.split()[2]
     if bidPriceStr == "None":
        bidPriceStr = linestr.split()[3] 
+    if bidPriceStr == "None":
+        return -1
     bidPrice = float(bidPriceStr)
     return bidPrice
 
@@ -139,6 +140,8 @@ def getaskPriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28
     askPriceStr = linestr.split()[3]
     if askPriceStr == "None":
        askPriceStr = linestr.split()[2] 
+    if askPriceStr == "None":
+        return -1
     askPrice = float(askPriceStr)
     return askPrice
 
@@ -153,3 +156,11 @@ def getPrevClosePriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2
     preClosePriceStr = linestr.split()[5]
     preClosePrice = float(preClosePriceStr)
     return preClosePrice
+
+def IsThereANone(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
+    for i in range(1, 5, 1):
+        text = linestr.split()[i]
+        if text == "None":
+            return True
+    return False
+    
