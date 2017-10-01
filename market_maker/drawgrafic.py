@@ -15,7 +15,7 @@ def run():
     #realisedbenifit_y6 = []
     movingaverage = []
     everydayprofit = []
-    graficdatafile = open("grafic.txt","r")
+    graficdatafile = open("grafic2.txt","r")
     maxloss = 100.0
     while True:
         line = graficdatafile.readline()
