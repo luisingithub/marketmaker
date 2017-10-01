@@ -6,8 +6,8 @@ import logging
 ########################################################################################################################
 
 # API URL.
-#BASE_URL = "https://testnet.bitmex.com/api/v1/"
-BASE_URL = "https://www.bitmex.com/api/v1/"
+BASE_URL = "https://testnet.bitmex.com/api/v1/"
+#BASE_URL = "https://www.bitmex.com/api/v1/"
 #REAL_BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment this.
 
 # The BitMEX API requires permanent API keys. Go to https://testnet.bitmex.com/api/apiKeys to fill these out.
@@ -134,8 +134,8 @@ STRATEGY = "MovingAverage"
 #period unit is "min": 1/5/60/1440
 IS_BACKTESTING = True
 BACKTEST_PERIOD = 5
-START_BTCOIN = 2
-BACKTESTFILE = "backtestingdataback.csv"
+START_BTCOIN = 0.8
+BACKTESTFILE = "backtestingdata.csv"
 R_BREAKER_F1 = 0.35
 R_BREAKER_F2 = 0.07
 R_BREAKER_F3 = 0.25
@@ -147,8 +147,8 @@ END_DATE = "2017-09-20"
 # Turle 
 DonchianN = 5 #number of backtime
 ATRN = 5
-ADDTIME = 20
-ZHIYINGUSD = 100.0
+ADDTIME = 10
+ZHIYINGUSD = 1000.0
 
 #MovingAverage
 AVERGAGEDAY = 20

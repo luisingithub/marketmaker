@@ -715,8 +715,10 @@ class OrderManager:
                     self.TurtlePos += 1
                     print(self.prevDayBacktest + (" 价格向上突破均线%.2f,建仓:%d, 建仓价为%.2f" %(self.movingAveragePrice, self.UnitPosition,self.startPrice_profit)))
             elif self.currentPrice < self.movingAveragePrice:
-                traderest = self.tradeTheRest(self.UnitPosition * (-1))
-                successTrade = self.UnitPosition * (-1) - traderest
+                nowBitcoin = settings.START_BTCOIN + self.totalprofit
+                shortFirstPos = self.UnitPosition * (-1) - self.currentPrice * nowBitcoin
+                traderest = self.tradeTheRest(shortFirstPos)
+                successTrade = shortFirstPos - traderest
                 if abs(successTrade)>0:
                     self.AddPrice[0] = self.lastBidPrice - 0.5 * self.ATR
                     self.TurtlePos -= 1
