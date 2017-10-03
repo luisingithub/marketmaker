@@ -223,7 +223,7 @@ class OrderManager:
         else:
             logger.info("Order Manager initializing, connecting to BitMEX. Live run: executing real trades on " + settings.BASE_URL)
             
-        self.graficdata2 = open("grafic2.txt", "a")
+        self.graficdata2 = open("grafic2.txt", "a", 1)
 
         if not settings.IS_BACKTESTING:
             self.instrument = self.exchange.get_instrument()
