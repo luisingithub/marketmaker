@@ -973,14 +973,14 @@ class OrderManager:
            
     def tradeTheRest_real(self, pos):   #trade the rest positions
         if pos > 0:
-            if pos > self.lastAskSize:
-                pos = self.lastAskSize
+            #if pos > self.lastAskSize:
+            #    pos = self.lastAskSize
             price = self.lastAskPrice
             print(self.todayDate + self.clockTime + ("buy %d with price %.2f" % (pos, price)))
             return self.exchange.bitmex.buy(int(pos), price) 
         elif pos < 0:
-            if abs(pos) > self.lastBidSize:
-                pos = self.lastBidSize 
+            #if abs(pos) > self.lastBidSize:
+            #    pos = self.lastBidSize 
             price = self.lastBidPrice
             print(self.todayDate + self.clockTime + ("sell %d with price %.2f" % (abs(pos), price)))
             return self.exchange.bitmex.sell(int(abs(pos)), price)
@@ -993,6 +993,7 @@ class OrderManager:
             self.tradeTheRest_real(-self.dynamic_position)
             sleep(5)
             self.dynamic_position = self.exchange.get_delta()
+        self.cancel_openorders()
     
     def handle_trade_Turtle_backtest(self, tradeline = " "):
         #logger.info('Debug by Lu: handle_trade_Turtle_backtest is called')   
@@ -1268,6 +1269,8 @@ class OrderManager:
         if not self.updatePriceAndSize():
             return 0
         
+        self.cancel_openorders()
+        
         self.margin = self.exchange.get_margin()
         self.dynamic_position = self.exchange.get_delta()
         self.current_XBT = self.margin["marginBalance"] / 100000000.0
@@ -1476,6 +1479,10 @@ class OrderManager:
 
         return {'price': price, 'orderQty': quantity, 'side': "Buy" if index < 0 else "Sell"} 
     
+    def cancel_openorders(self):
+        existing_orders = self.exchange.get_orders()
+        if len(existing_orders) > 0:
+            self.exchange.cancel_bulk_orders(existing_orders)
 
     def converge_orders(self, buy_orders, sell_orders):
         """Converge the orders we currently have in the book with what we want to be in the book.
