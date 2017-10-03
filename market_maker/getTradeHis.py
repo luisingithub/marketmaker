@@ -19,7 +19,7 @@ class GetHisTradeDatas:
             self.symbol = sys.argv[1]
         else:
             self.symbol = settings.SYMBOL
-        self.bitmex = bitmex.BitMEX(base_url=settings.BASE_URL, symbol=self.symbol, login=settings.REAL_LOGIN,
+        self.bitmex = bitmex.BitMEX(base_url=settings.REAL_BASE_URL, symbol=self.symbol, login=settings.REAL_LOGIN,
                                     password=settings.REAL_PASSWORD, otpToken=settings.OTPTOKEN, apiKey=settings.REAL_API_KEY,
                                     apiSecret=settings.REAL_API_SECRET, orderIDPrefix=settings.REAL_ORDERID_PREFIX, shouldWSAuth=False)
         self.period = settings.BACKTEST_PERIOD
@@ -100,6 +100,13 @@ def getYesterday(currentdate = "2017-09-01"):
     stryesterday = yesterday.strftime("%Y-%m-%d")
     #print(strtomorrow)
     return stryesterday
+
+def getXDaysBefore(currentdate = "2017-09-01", x = 1):
+    today = datetime.date(fetchYearFromTime(currentdate),fetchMonthFromTime(currentdate),fetchDayFromTime(currentdate))    
+    xdaysbefore = today - datetime.timedelta(days=x)
+    strxdaysbefore = xdaysbefore.strftime("%Y-%m-%d")
+    #print(strtomorrow)
+    return strxdaysbefore
         
 def fetchYearFromTime(currentdate = "2017-11-21"):
     yearstr = currentdate[:4]

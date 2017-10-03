@@ -8,7 +8,7 @@ import logging
 # API URL.
 BASE_URL = "https://testnet.bitmex.com/api/v1/"
 #BASE_URL = "https://www.bitmex.com/api/v1/"
-#REAL_BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment this.
+REAL_BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment this.
 
 # The BitMEX API requires permanent API keys. Go to https://testnet.bitmex.com/api/apiKeys to fill these out.
 API_KEY = "zHgnTX-8mdBba8pEbKLQY7qj"
@@ -85,7 +85,7 @@ DRY_RUN = False
 # How often to re-check and replace orders.
 # Generally, it's safe to make this short because we're fetching from websockets. But if too many
 # order amend/replaces are done, you may hit a ratelimit. If so, email BitMEX if you feel you need a higher limit.
-LOOP_INTERVAL = 5
+LOOP_INTERVAL = 5 # 300 seconds, 5mins
 
 # Wait times between orders / errors
 API_REST_INTERVAL = 1
@@ -132,7 +132,7 @@ STRATEGY = "MovingAverage"
 
 #backtesting 
 #period unit is "min": 1/5/60/1440
-IS_BACKTESTING = True
+IS_BACKTESTING = False
 BACKTEST_PERIOD = 5
 START_BTCOIN = 0.5
 BACKTESTFILE = "backtestingdata.csv"
@@ -154,3 +154,4 @@ ZHIYINGUSD = 1000.0
 AVERGAGEDAY = 20
 UPPERLIMIT = 2400
 UNTERLIMIT = -8000
+AVERAGENUMPERIORD = 20 # 20 * 5min = 100mins

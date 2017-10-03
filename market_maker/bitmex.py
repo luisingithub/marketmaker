@@ -67,7 +67,7 @@ class BitMEX(object):
         """Get an instrument's details."""
         return self.ws.get_instrument(symbol)
 
-    def quoteBucketed(self, symbol, binSize, startdate):
+    def quoteBucketed(self, symbol, binSize, startdate, reverse = 'false'):
         endpoint = "quote/bucketed"
         # Generate a unique clOrdID with our prefix so we can identify it.
         if binSize == 5:
@@ -83,9 +83,42 @@ class BitMEX(object):
         postdict = {
             'symbol': self.symbol,
             'binSize': postdict_binSize,
-            #'reverse': 'false',
+            'reverse': reverse,
             'count': countnumber,
             'startTime':startdate
+        }
+        return self._curl_bitmex(api=endpoint, postdict=postdict, verb="GET")
+    
+    def quoteBucketedWithoutTime(self, symbol, binSize, reverse = 'false'):
+        endpoint = "quote/bucketed"
+        # Generate a unique clOrdID with our prefix so we can identify it.
+        if binSize == 5:
+            postdict_binSize = '5m'
+            countnumber = 288
+        elif binSize == 60:
+            postdict_binSize = '1h'
+            countnumber = 24
+        elif binSize == 1440:
+            postdict_binSize = '1d'
+            countnumber = 1
+            
+        postdict = {
+            'symbol': self.symbol,
+            'binSize': postdict_binSize,
+            'reverse': reverse,
+            'count': countnumber,
+        }
+        return self._curl_bitmex(api=endpoint, postdict=postdict, verb="GET")
+    
+    def quote(self, symbol = "XBTUSD"):
+        endpoint = "quote"
+        # Generate a unique clOrdID with our prefix so we can identify it.
+        countnumber = 1
+            
+        postdict = {
+            'symbol': self.symbol,
+            'reverse': 'true',
+            'count': countnumber,
         }
         return self._curl_bitmex(api=endpoint, postdict=postdict, verb="GET")
     
@@ -105,7 +138,7 @@ class BitMEX(object):
         postdict = {
             'symbol': self.symbol,
             'binSize': postdict_binSize,
-            #'reverse': 'false',
+            #'reverse': reverse,
             'count': countnumber,
             'startTime':startdate
         }
