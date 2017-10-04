@@ -125,3 +125,9 @@ Compatibility
 This module is compatible with both Python 2 and 3 using Python's `future` module.
 
 Some helpful tips on Py2/3 compatibility: http://python-future.org/compatible_idioms.html
+
+commen used instruments:
+查询进程： ps -ef | grep marketmaker
+运行程序： nohup python3 marketmaker.py  
+Git清楚本地更改： git reset --hard     
+杀死进程： kill -9 22971
