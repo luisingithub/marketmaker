@@ -972,6 +972,7 @@ class OrderManager:
         return restTrade
            
     def tradeTheRest_real(self, pos):   #trade the rest positions
+        pos = int(pos)
         destinatePos = self.dynamic_position + pos
         while True:
             self.dynamic_position = self.exchange.get_delta()
