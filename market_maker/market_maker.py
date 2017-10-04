@@ -972,18 +972,30 @@ class OrderManager:
         return restTrade
            
     def tradeTheRest_real(self, pos):   #trade the rest positions
-        if pos > 0:
-            #if pos > self.lastAskSize:
-            #    pos = self.lastAskSize
-            price = self.lastAskPrice
-            print(self.todayDate + self.clockTime + ("buy %d with price %.2f" % (pos, price)))
-            return self.exchange.bitmex.buy(int(pos), price) 
-        elif pos < 0:
-            #if abs(pos) > self.lastBidSize:
-            #    pos = self.lastBidSize 
-            price = self.lastBidPrice
-            print(self.todayDate + self.clockTime + ("sell %d with price %.2f" % (abs(pos), price)))
-            return self.exchange.bitmex.sell(int(abs(pos)), price)
+        destinatePos = self.dynamic_position + pos
+        while True:
+            self.dynamic_position = self.exchange.get_delta()
+            if self.dynamic_position == destinatePos:
+                break
+
+            self.updatePriceAndSize()
+            pos = destinatePos - self.dynamic_position
+            if pos > 0:
+                if pos > self.lastAskSize:
+                    pos = self.lastAskSize
+                    price = self.lastAskPrice
+                    print(self.todayDate + self.clockTime + ("buy %d with price %.2f" % (pos, price)))
+                    self.exchange.bitmex.buy(int(pos), price) 
+            elif pos < 0:
+                pos = -pos
+                if pos > self.lastBidPrice:
+                    pos = self.lastBidPrice
+                    price = self.lastBidPrice
+                    print(self.todayDate + self.clockTime + ("sell %d with price %.2f" % (pos, price)))
+                    self.exchange.bitmex.sell(int(pos), price)
+            sleep(1)
+            self.cancel_openorders()
+        return True
     
     def sellorbuyAll(self): # 平仓 
         while True: # 首次启动时先全部平仓
@@ -994,6 +1006,7 @@ class OrderManager:
             sleep(5)
             self.dynamic_position = self.exchange.get_delta()
         self.cancel_openorders()
+        self.TurtlePos = 0
     
     def handle_trade_Turtle_backtest(self, tradeline = " "):
         #logger.info('Debug by Lu: handle_trade_Turtle_backtest is called')   
@@ -1224,7 +1237,6 @@ class OrderManager:
             self.traderest = self.tradeTheRest(self.traderest)
             
     def updatePriceAndSize(self):
-        self.simulateTimeNumbers = (self.simulateTimeNumbers + 1) % settings.AVERAGENUMPERIORD
         
         self.currentQuote = self.exchange.bitmex.quote()   
         self.clockTime = self.currentQuote[0]["timestamp"][11:-5]
@@ -1266,6 +1278,8 @@ class OrderManager:
     
     def handle_movingaverage_20h_real(self, tradeline = " "):
         #logger.info('Debug by Lu: handle_movingaverage_20h_real is called') 
+        self.simulateTimeNumbers = (self.simulateTimeNumbers + 1) % settings.AVERAGENUMPERIORD
+        
         if not self.updatePriceAndSize():
             return 0
         
