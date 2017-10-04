@@ -983,16 +983,16 @@ class OrderManager:
             if pos > 0:
                 if pos > self.lastAskSize:
                     pos = self.lastAskSize
-                    price = self.lastAskPrice
-                    print(self.todayDate + self.clockTime + ("buy %d with price %.2f" % (pos, price)))
-                    self.exchange.bitmex.buy(int(pos), price) 
+                price = self.lastAskPrice
+                print(self.todayDate + self.clockTime + ("buy %d with price %.2f" % (pos, price)))
+                self.exchange.bitmex.buy(int(pos), price) 
             elif pos < 0:
                 pos = -pos
                 if pos > self.lastBidPrice:
                     pos = self.lastBidPrice
-                    price = self.lastBidPrice
-                    print(self.todayDate + self.clockTime + ("sell %d with price %.2f" % (pos, price)))
-                    self.exchange.bitmex.sell(int(pos), price)
+                price = self.lastBidPrice
+                print(self.todayDate + self.clockTime + ("sell %d with price %.2f" % (pos, price)))
+                self.exchange.bitmex.sell(int(pos), price)
             sleep(1)
             self.cancel_openorders()
         return True
