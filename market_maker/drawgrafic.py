@@ -15,6 +15,7 @@ def run():
     #realisedbenifit_y6 = []
     movingaverage = []
     everydayprofit = []
+    timeindex = []
     graficdatafile = open("grafic2.txt","r")
     maxloss = 100.0
     while True:
@@ -24,9 +25,10 @@ def run():
         x1.append(index)
         dailyPrice_y1.append(float(line.split()[0]))
         y2.append(float(line.split()[1]))
-        y3.append(float(line.split()[2])/100)
+        y3.append(float(line.split()[2]))
         movingaverage.append(float(line.split()[3]))
         basebenifit_y4.append(float(line.split()[4]))
+        timeindex.append(line.split()[5])
         #unrealisedbenifit_y5.append(float(line.split()[5]))
         #realisedbenifit_y6.append(float(line.split()[6]))
         if index >=2:
@@ -54,11 +56,17 @@ def run():
     print("最高亏损为%.2f%%!" % maxloss)
     #print("收益日平均为%.2f" % profitmean)
     
-    pricedaily = Scatter(x=x1,y=dailyPrice_y1, name = "Daily Close Price(USD)")
-    basebenifit = Scatter(x=x1,y=basebenifit_y4,name = "Base Benifit(%)")
-    yourbenifit = Scatter(x=x1,y=y2,name = "Your Benifit(%)")
-    dynamicposition = Scatter(x=x1,y=y3,name = "Dynamic Position(USD)")
-    movingaveragescatter = Scatter(x=x1,y=movingaverage,name = "Moving Average(USD)")
+   #pricedaily = Scatter(x=x1,y=dailyPrice_y1, name = "Daily Close Price(USD)")
+    #basebenifit = Scatter(x=x1,y=basebenifit_y4,name = "Base Benifit(%)")
+    #yourbenifit = Scatter(x=x1,y=y2,name = "Your Benifit(%)")
+    #dynamicposition = Scatter(x=x1,y=y3,name = "Dynamic Position(USD)")
+    #movingaveragescatter = Scatter(x=x1,y=movingaverage,name = "Moving Average(USD)")
+    
+    pricedaily = Scatter(x=timeindex,y=dailyPrice_y1, name = "Daily Close Price(USD)")
+    basebenifit = Scatter(x=timeindex,y=basebenifit_y4,name = "Base Benifit(%)")
+    yourbenifit = Scatter(x=timeindex,y=y2,name = "Your Benifit(%)")
+    dynamicposition = Scatter(x=timeindex,y=y3,name = "Dynamic Position(USD)")
+    movingaveragescatter = Scatter(x=timeindex,y=movingaverage,name = "Moving Average(USD)")
     
     #unrealisedbenifitscatter = Scatter(x=x1,y=unrealisedbenifit_y5)
     #realisedbenifitscatter = Scatter(x=x1,y=realisedbenifit_y6)

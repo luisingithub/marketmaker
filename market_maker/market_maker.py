@@ -883,7 +883,7 @@ class OrderManager:
         elif abs(self.dynamic_position) > 0:
             sell_break = self.AddPrice[abs(self.TurtlePos) - 1] - 2 * self.ATR
             buy_break = self.AddPrice[abs(self.TurtlePos) - 1] + 2 * self.ATR
-            if self.TurtlePos > 0:
+            if self.dynamic_position > 0:
                 if self.currentPrice < self.movingAveragePrice or self.currentPrice < sell_break:
                     self.sellorbuyAll()
                     print(self.todayDate + self.clockTime + (": 价格向下跌破均线/2ATR触发止盈/平仓, 平仓价为%.2f" %(self.lastBidPrice)))
@@ -899,7 +899,7 @@ class OrderManager:
                     self.AddPrice[abs(self.TurtlePos)] = self.AddPrice[abs(self.TurtlePos) - 1] + 0.5 * self.ATR
                     self.TurtlePos += 1
                     print(self.todayDate + self.clockTime +  (": 价格向上突破%.2f, 加仓 %d, 现仓位为%.d, 仓位均价%.2f" %(self.AddPrice[abs(self.TurtlePos) - 2],self.UnitPosition, self.dynamic_position, self.lastAskPrice)))
-            elif self.TurtlePos < 0:
+            elif self.dynamic_position < 0:
                 if self.currentPrice > self.movingAveragePrice  or self.currentPrice > buy_break :
                     pos = self.dynamic_position
                     self.sellorbuyAll()
