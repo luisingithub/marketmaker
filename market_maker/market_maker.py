@@ -1303,7 +1303,7 @@ class OrderManager:
             self.currentTradeBucketed = self.exchange.bitmex.tradeBucketed(self.exchange.symbol, 1440, self.todayDate)
             self.highPriceQueue.append(self.todayHighPrice)
             self.lowPriceQueue.append(self.todayLowPrice)
-            self.prevClosePrice = self.currentTradeBucketed[0]["close"]
+            self.prevClosePrice = self.currentPrice
             self.prevHighPrice = self.todayHighPrice
             self.prevLowPrice = self.todayLowPrice
             self.todayHighPrice = self.prevClosePrice
