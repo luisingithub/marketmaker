@@ -973,9 +973,9 @@ class OrderManager:
            
     def tradeTheRest_real(self, pos):   #trade the rest positions
         pos = int(pos)
+        self.dynamic_position = self.exchange.get_delta()
         destinatePos = self.dynamic_position + pos
         while True:
-            self.dynamic_position = self.exchange.get_delta()
             if self.dynamic_position == destinatePos:
                 break
 
@@ -996,6 +996,9 @@ class OrderManager:
                 self.exchange.bitmex.sell(int(pos), price)
             sleep(1)
             self.cancel_openorders()
+            sleep(1)
+            self.dynamic_position = self.exchange.get_delta()
+            print(self.todayDate + self.clockTime + ("after the buy or sell, now we have dynamic_postion = %d" % (self.dynamic_position)))
         return True
     
     def sellorbuyAll(self): # 平仓 
