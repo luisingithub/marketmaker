@@ -401,10 +401,13 @@ class OrderManager:
         self.traderest = 0.0
     
     def updatePositionLimit(self):
-        nowbitcoin = settings.START_BTCOIN + self.totalprofit + self.unrealisedBitcoinBenifit
+        if settings.IS_BACKTESTING:
+            nowbitcoin = settings.START_BTCOIN + self.totalprofit + self.unrealisedBitcoinBenifit
+        else:
+            nowbitcoin = self.current_XBT
         if nowbitcoin > 0:
-            self.UPPERLIMITPOS = nowbitcoin * self.prevClosePrice * 1
-            self.UNTERLIMITPOS = nowbitcoin * self.prevClosePrice * (-2)
+            self.UPPERLIMITPOS = nowbitcoin * self.currentPrice * 2
+            self.UNTERLIMITPOS = nowbitcoin * self.currentPrice * (-3)
             print("UPPERLIMITPOS = %d, UNTERLIMITPOS = %d" % (self.UPPERLIMITPOS, self.UNTERLIMITPOS))
     
     def benifitCaculate(self):
@@ -1299,6 +1302,7 @@ class OrderManager:
             self.prevClosePrice = self.currentTradeBucketed[0]["close"]
             self.calcATR()
             self.CalcUnit(self.prevClosePrice)
+            self.updatePositionLimit()
             
             #self.firstTime = False
         Is_newDay = self.is_newDay(tradeline)
@@ -1760,6 +1764,7 @@ class OrderManager:
         self.graficdata2.close()
             
     def restart(self):
+        sleep(180) #wait 3 minute
         logger.info("Restarting the market maker...")
         os.execv(sys.executable, [sys.executable] + sys.argv)
 
