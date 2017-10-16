@@ -718,7 +718,7 @@ class OrderManager:
         else:
             X = self.current_XBT
         if self.ATR != 0:
-            self.UnitPosition = int(abs(0.1 * X * nowPrice * (nowPrice + self.ATR) / self.ATR))
+            self.UnitPosition = int(abs(0.02 * X * nowPrice * (nowPrice + self.ATR) / self.ATR))
         print(self.todayDate + (": bitcoin = %.4f today UnitPosition = %d, nowPrice = %.2f, ATR = %d, dynamicpostion = %d" % (X, self.UnitPosition, nowPrice, self.ATR, self.dynamic_position)))
         
     def tradeTultle(self):
