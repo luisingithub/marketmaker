@@ -1717,6 +1717,8 @@ class OrderManager:
         self.graficdata2.write(str("%.2f" % self.baseBenifit))
         self.graficdata2.write(" ")
         self.graficdata2.write(self.todayDate + self.clockTime)
+        self.graficdata2.write(" ")
+        self.graficdata2.write(str("%.2f" % (self.currentPrice * self.current_XBT)))
         self.graficdata2.write("\n")
     
     def run_backtesting(self):
