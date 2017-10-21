@@ -884,8 +884,8 @@ class OrderManager:
                 self.TurtlePos -= 1
                 print(self.todayDate + self.clockTime + (": 价格向下跌破均线%.2f,建仓:-%d, 建仓价为%.2f" %(self.movingAveragePrice, shortFirstPos, self.lastBidPrice)))
         elif abs(self.dynamic_position) > 0:
-            sell_break = self.AddPrice[abs(self.TurtlePos) - 1] - 2 * self.ATR
-            buy_break = self.AddPrice[abs(self.TurtlePos) - 1] + 2 * self.ATR
+            sell_break = self.AddPrice[abs(self.TurtlePos) - 1] - self.ATR
+            buy_break = self.AddPrice[abs(self.TurtlePos) - 1] + self.ATR
             if self.dynamic_position > 0:
                 if self.currentPrice < self.movingAveragePrice or self.currentPrice < sell_break:
                     self.sellorbuyAll()
