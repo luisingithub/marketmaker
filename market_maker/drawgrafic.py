@@ -12,6 +12,10 @@ def run():
     y3 = []
     basebenifit_y4 = []
     nowUSD = []
+    YourBenifitBiggerBase = 0
+    BaseBenifitBiggerYour = 0
+    maxPositiveDiff = 0.0
+    maxNegativeDiff = 0.0
     #unrealisedbenifit_y5 = []
     #realisedbenifit_y6 = []
     movingaverage = []
@@ -25,10 +29,22 @@ def run():
             break
         x1.append(index)
         dailyPrice_y1.append(float(line.split()[0]))
-        y2.append(float(line.split()[1]))
-        y3.append(float(line.split()[2]))
+        yourBenifit = float(line.split()[1])
+        baseBenifit = float(line.split()[4])
+        if yourBenifit > baseBenifit:
+            YourBenifitBiggerBase += 1
+            diff = yourBenifit - baseBenifit
+            if diff > maxPositiveDiff:
+                maxPositiveDiff = diff
+        elif yourBenifit < baseBenifit:
+            BaseBenifitBiggerYour += 1
+            diff = baseBenifit - yourBenifit
+            if diff > maxNegativeDiff:
+                maxNegativeDiff = diff   
+        y2.append(yourBenifit)
+        y3.append(float(line.split()[2])/1000)
         movingaverage.append(float(line.split()[3]))
-        basebenifit_y4.append(float(line.split()[4]))
+        basebenifit_y4.append(baseBenifit)
         timeindex.append(line.split()[5])
         #nowUSD.append(float(line.split()[6]))
         #unrealisedbenifit_y5.append(float(line.split()[5]))
@@ -53,10 +69,12 @@ def run():
                 drawback = (y2[i] - y2[j]) / (y2[i]+100.0) * 100
                 if drawback > max:
                     max = drawback
+    winRatio = YourBenifitBiggerBase / (YourBenifitBiggerBase + BaseBenifitBiggerYour) * 100.0
     print("最大回撤为-%.2f%%!" % max)
     print("夏普率为%.2f" % sharpratio)
     print("最高亏损为%.2f%%!" % maxloss)
-    #print("收益日平均为%.2f" % profitmean)
+    print("策略盈利高于基准盈利次数为: %d, 基准高于策略次数为: %d, 盈利比例为  %.2f%%" % (YourBenifitBiggerBase, BaseBenifitBiggerYour, winRatio))
+    print("最大正盈利为: %.2f%%, 最大负盈利为: -%.2f%%" % (maxPositiveDiff, maxNegativeDiff))
     
    #pricedaily = Scatter(x=x1,y=dailyPrice_y1, name = "Daily Close Price(USD)")
     #basebenifit = Scatter(x=x1,y=basebenifit_y4,name = "Base Benifit(%)")
