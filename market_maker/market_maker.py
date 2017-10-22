@@ -407,7 +407,7 @@ class OrderManager:
             nowbitcoin = self.current_XBT
         if nowbitcoin > 0:
             self.UPPERLIMITPOS = nowbitcoin * self.currentPrice * 2
-            self.UNTERLIMITPOS = nowbitcoin * self.currentPrice * (-3)
+            self.UNTERLIMITPOS = nowbitcoin * self.currentPrice * (-4)
             print("UPPERLIMITPOS = %d, UNTERLIMITPOS = %d" % (self.UPPERLIMITPOS, self.UNTERLIMITPOS))
     
     def benifitCaculate(self):
@@ -878,7 +878,7 @@ class OrderManager:
                 self.TurtlePos += 1
                 print(self.todayDate + self.clockTime + (": 价格向上突破均线%.2f,建仓:%d, 建仓价为%.2f" %(self.movingAveragePrice, self.UnitPosition,self.lastAskPrice)))
             elif self.currentPrice < self.movingAveragePrice:
-                shortFirstPos = self.UnitPosition * (-1) - self.currentPrice * self.current_XBT
+                shortFirstPos = self.UnitPosition * (-1) - self.currentPrice * self.current_XBT * 2
                 self.tradeTheRest_real(shortFirstPos)
                 self.AddPrice[0] = self.lastBidPrice - 0.5 * self.ATR
                 self.TurtlePos -= 1

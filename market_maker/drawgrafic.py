@@ -46,7 +46,7 @@ def run():
         movingaverage.append(float(line.split()[3]))
         basebenifit_y4.append(baseBenifit)
         timeindex.append(line.split()[5])
-        #nowUSD.append(float(line.split()[6]))
+        nowUSD.append(float(line.split()[6]))
         #unrealisedbenifit_y5.append(float(line.split()[5]))
         #realisedbenifit_y6.append(float(line.split()[6]))
         if index >=2:
@@ -87,10 +87,10 @@ def run():
     yourbenifit = Scatter(x=timeindex,y=y2,name = "Your Benifit(%)")
     dynamicposition = Scatter(x=timeindex,y=y3,name = "Dynamic Position(USD)")
     movingaveragescatter = Scatter(x=timeindex,y=movingaverage,name = "Moving Average(USD)")
-    #dailyUSDscatter = Scatter(x=timeindex,y=nowUSD,name = "your money(USD)")
+    dailyUSDscatter = Scatter(x=timeindex,y=nowUSD,name = "your money(USD)")
     
     #unrealisedbenifitscatter = Scatter(x=x1,y=unrealisedbenifit_y5)
     #realisedbenifitscatter = Scatter(x=x1,y=realisedbenifit_y6)
-    data = Data([basebenifit, yourbenifit, dynamicposition, movingaveragescatter,pricedaily])
+    data = Data([basebenifit, yourbenifit, dynamicposition, movingaveragescatter,pricedaily, dailyUSDscatter])
     plotly.offline.plot({"data": data,"layout": Layout(title="benifit comparision")})
     
