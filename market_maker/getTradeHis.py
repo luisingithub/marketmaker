@@ -76,7 +76,7 @@ class GetHisTradeDatas:
         
 def run():
     DR = GetHisTradeDatas()
-    DR.createFile("backtestingdata2017.csv")
+    DR.createFile(settings.BACKTESTFILE)
     DR.run_loop()
     #DR.run_loop_back()
     DR.closeFile()
