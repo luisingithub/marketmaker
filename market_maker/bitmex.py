@@ -83,7 +83,7 @@ class BitMEX(object):
         postdict = {
             'symbol': self.symbol,
             'binSize': postdict_binSize,
-            'reverse': reverse,
+            #'reverse': reverse,
             'count': countnumber,
             'startTime':startdate
         }

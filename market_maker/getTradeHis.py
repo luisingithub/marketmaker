@@ -54,7 +54,7 @@ class GetHisTradeDatas:
             dateindex = getNextDay(dateindex)
             for i in range(0,self.number_per_day):
                 self.writeLineintoFile(i) 
-            print(dateindex)              
+            print(dateindex)           
             if is_datefinished(dateindex,settings.END_DATE):
                 print("data recording finish!")
                 break   
@@ -76,7 +76,7 @@ class GetHisTradeDatas:
         
 def run():
     DR = GetHisTradeDatas()
-    DR.createFile("backtestingdata2017.csv")
+    DR.createFile(settings.DATARECORDFILE)
     DR.run_loop()
     #DR.run_loop_back()
     DR.closeFile()

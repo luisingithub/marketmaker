@@ -14,8 +14,8 @@ REAL_BASE_URL = "https://www.bitmex.com/api/v1/" # Once you're ready, uncomment 
 API_KEY = "zHgnTX-8mdBba8pEbKLQY7qj"
 API_SECRET = "6knPb6z1eOL-eFlo_SInS2zCwDWd-5R11p1adnTT_CJdtPHs"
 
-REAL_API_KEY = "bTS72bah7Ij7H96m_O72wjGG"
-REAL_API_SECRET = "D6GOFHmG0xR-y8x0ARNig4y3U1kJEWve-ovAirdgU45-O2Lc"
+REAL_API_KEY = "AeKNVEvlN-DrTv0kjnaO6Jya"
+REAL_API_SECRET = "5lYpll_XClAbiDipaKhyDjdIXLm7ZoY-LIppUqkzstIH4WhG"
 
 
 
@@ -95,7 +95,7 @@ API_ERROR_INTERVAL = 10
 DRY_BTC = 50
 
 # Available levels: logging.(DEBUG|INFO|WARN|ERROR)
-LOG_LEVEL = logging.ERROR
+LOG_LEVEL = logging.INFO
 
 # To uniquely identify orders placed by this bot, the bot sends a ClOrdID (Client order ID) that is attached
 # to each order so its source can be identified. This keeps the market maker from cancelling orders that are
@@ -141,9 +141,9 @@ R_BREAKER_F2 = 0.07
 R_BREAKER_F3 = 0.25
 
 #data record and backtest
-START_DATE = "2017-08-01"
-END_DATE = "2017-09-19"
-
+START_DATE = '2017-09-01'
+END_DATE = '2017-11-05'
+DATARECORDFILE = "backtestingdata"+START_DATE+END_DATE+".csv"
 # Turle 
 DonchianN = 5 #number of backtime
 ATRN = 5
