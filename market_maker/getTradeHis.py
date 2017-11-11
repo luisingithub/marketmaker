@@ -123,6 +123,10 @@ def fetchDayFromTime(currentdate = "2017-11-21"):
     day = int(daystr)
     return day 
 
+def getClockFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
+    clock = linestr[11:18]
+    return clock
+
 def getDateFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
     date = linestr[:10]
     return date

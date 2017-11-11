@@ -134,7 +134,7 @@ STRATEGY = "MovingAverage"
 #period unit is "min": 1/5/60/1440
 IS_BACKTESTING = False
 BACKTEST_PERIOD = 5
-START_BTCOIN = 0.5
+START_BTCOIN = 0.1
 BACKTESTFILE = "backtestingdata.csv"
 R_BREAKER_F1 = 0.35
 R_BREAKER_F2 = 0.07
