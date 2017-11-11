@@ -135,7 +135,7 @@ STRATEGY = "MovingAverage"
 IS_BACKTESTING = False
 BACKTEST_PERIOD = 5
 START_BTCOIN = 0.1
-BACKTESTFILE = "backtestingdata.csv"
+
 R_BREAKER_F1 = 0.35
 R_BREAKER_F2 = 0.07
 R_BREAKER_F3 = 0.25
@@ -143,7 +143,9 @@ R_BREAKER_F3 = 0.25
 #data record and backtest
 START_DATE = '2017-09-01'
 END_DATE = '2017-11-05'
-DATARECORDFILE = "backtestingdata"+START_DATE+END_DATE+".csv"
+DATARECORDFILE = "backtestingdata" + START_DATE + END_DATE + ".csv"
+BACKTESTFILE = DATARECORDFILE
+
 # Turle 
 DonchianN = 5 #number of backtime
 ATRN = 5
