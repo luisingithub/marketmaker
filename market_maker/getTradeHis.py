@@ -124,7 +124,7 @@ def fetchDayFromTime(currentdate = "2017-11-21"):
     return day 
 
 def getClockFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
-    clock = linestr[11:18]
+    clock = linestr[11:19]
     return clock
 
 def getDateFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
@@ -141,7 +141,7 @@ def getbidSizeFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 284
 def getbidPriceFromLine(linestr = "2017-08-01T00:00:00.000Z 28547 2854.7 2859 28448 2854.7"):
     bidPriceStr = linestr.split()[2]
     if bidPriceStr == "None":
-       bidPriceStr = linestr.split()[3] 
+       bidPriceStr = linestr.split()[3]
     if bidPriceStr == "None":
         return -1
     bidPrice = float(bidPriceStr)

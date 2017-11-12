@@ -94,7 +94,7 @@ class BitMEX(object):
         # Generate a unique clOrdID with our prefix so we can identify it.
         if binSize == 5:
             postdict_binSize = '5m'
-            countnumber = 400 # 20 * 100min = 2000min / 5 = 400
+            countnumber = 500 # 20 * 100min = 2000min / 5 = 400, 25 * 100min = 2500 / 5 = 500
         elif binSize == 60:
             postdict_binSize = '1h'
             countnumber = 24

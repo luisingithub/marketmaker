@@ -42,7 +42,7 @@ def run():
             if diff > maxNegativeDiff:
                 maxNegativeDiff = diff   
         y2.append(yourBenifit)
-        y3.append(float(line.split()[2])/1000)
+        y3.append(float(line.split()[2])/100)
         movingaverage.append(float(line.split()[3]))
         basebenifit_y4.append(baseBenifit)
         timeindex.append(line.split()[5])
@@ -64,13 +64,13 @@ def run():
     for i in range(0,index-2,1):
         if y2[i] < maxloss:
             maxloss = y2[i]
-        for j in range(i+1,index-1,1):
-            if y2[i] > y2[j] and y2[i] > 0:
-                drawback = (y2[i] - y2[j]) / (y2[i]+100.0) * 100
-                if drawback > max:
-                    max = drawback
+        #for j in range(i+1,index-1,1):
+            #if y2[i] > y2[j] and y2[i] > 0:
+                #drawback = (y2[i] - y2[j]) / (y2[i]+100.0) * 100
+                #if drawback > max:
+                    #max = drawback
     winRatio = YourBenifitBiggerBase / (YourBenifitBiggerBase + BaseBenifitBiggerYour) * 100.0
-    print("最大回撤为-%.2f%%!" % max)
+    #print("最大回撤为-%.2f%%!" % max)
     print("夏普率为%.2f" % sharpratio)
     print("最高亏损为%.2f%%!" % maxloss)
     print("策略盈利高于基准盈利次数为: %d, 基准高于策略次数为: %d, 盈利比例为  %.2f%%" % (YourBenifitBiggerBase, BaseBenifitBiggerYour, winRatio))
