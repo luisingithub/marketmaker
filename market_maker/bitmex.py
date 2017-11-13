@@ -117,7 +117,7 @@ class BitMEX(object):
             
         postdict = {
             'symbol': self.symbol,
-            'reverse': 'true',
+            #'reverse': 'true',
             'count': countnumber,
         }
         return self._curl_bitmex(api=endpoint, postdict=postdict, verb="GET")
