@@ -1194,7 +1194,7 @@ class OrderManager:
             self.initNumOfXBT = self.current_XBT
             self.prevClosePrice = self.currentTradeBucketed[0]["close"]
             self.calcATR()
-            self.CalcUnit(self.prevClosePrice)
+            self.CalcUnit(self.currentPrice)
             self.updatePositionLimit()
             
             #self.firstTime = False
@@ -1210,7 +1210,7 @@ class OrderManager:
             self.todayLowPrice = self.prevClosePrice
             self.simulateDayNumbers += 1
             self.calcATR()
-            self.CalcUnit(self.prevClosePrice)
+            self.CalcUnit(self.currentPrice)
             self.updatePositionLimit()
         
         if self.firstTime:
