@@ -307,6 +307,8 @@ class OrderManager:
             self.reset()
             
     def init_MeanAndHighLowPrices(self):
+        self.lastAskPrice = 0
+        self.lastBidPrice = 0
         self.highPriceQueue = collections.deque(settings.DonchianN * [0], settings.ATRN)
         self.lowPriceQueue = collections.deque(settings.DonchianN * [0], settings.ATRN)
         
